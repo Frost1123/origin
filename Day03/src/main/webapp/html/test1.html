@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/day03/js/vue.js"></script>
+    <script type="text/javascript" src="/day03/js/axios.js"></script>
+</head>
+<body>
+<div id="lis">
+    <div  v-on:click="test">
+        {{m1}}
+    </div>
+    <div  v-on:click="test">
+        {{m2}}
+    </div>
+</div>
+</body>
+<script>
+ new Vue({
+     el:'#lis',
+     data:{
+         m1:"铭哥",
+         m2:"撸神"
+     },
+    methods:{
+         test:function () {
+             var params = new URLSearchParams();
+             params.append("m1",this.m1);
+             params.append("m2",this.m2);
+             axios.post("/day03/test",params).then(response=>{
+                 this.m1 = response.data.m1;
+                 this.m2 = response.data.m2;
+             })
+         }
+    }
+ });
+</script>
+</html>
