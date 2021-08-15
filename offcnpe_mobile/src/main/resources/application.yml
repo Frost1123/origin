@@ -1,0 +1,16 @@
+server:
+  port: 9003
+  servlet:
+    context-path: /
+spring:
+  application:
+    name: health_mobile
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/health?serverTimezone=Asia/Shanghai
+    password: root
+    username: 520520
+    type: com.alibaba.druid.pool.DruidDataSource
+  redis:
+    host: 192.168.100.100
+    port: 6379
