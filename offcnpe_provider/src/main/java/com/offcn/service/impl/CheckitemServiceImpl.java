@@ -8,12 +8,15 @@ import com.offcn.constants.PageResult;
 import com.offcn.constants.QueryPageBean;
 import com.offcn.mapper.CheckgroupCheckitemMapper;
 import com.offcn.mapper.CheckitemMapper;
+import com.offcn.pojo.CheckgroupCheckitem;
 import com.offcn.pojo.Checkitem;
 import com.offcn.service.CheckitemService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component//IOC
 @Service(interfaceClass = CheckitemService.class)
@@ -64,5 +67,18 @@ public class CheckitemServiceImpl implements CheckitemService {
     @Override
     public void updateInfoById(Checkitem checkitem) {
         checkitemMapper.updateById(checkitem);
+    }
+
+    @Override
+    public List<Checkitem> showAllItem() {
+        return checkitemMapper.selectList(null);
+    }
+
+    @Override
+    public List<Integer> getCheckItemIdByGroupId(Integer id) {
+        QueryWrapper<CheckgroupCheckitem> wrapper = new QueryWrapper<CheckgroupCheckitem>();
+        wrapper.select("checkitem_id");
+        wrapper.eq("checkgroup_id",id);
+        return checkgroupCheckitemMapper.selectObjs(wrapper).stream().map(o ->(Integer)o).collect(Collectors.toList());
     }
 }

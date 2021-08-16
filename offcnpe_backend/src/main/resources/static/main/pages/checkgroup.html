@@ -54,7 +54,7 @@
     <div class="app-container">
         <div class="box">
             <div class="filter-container">
-                <el-input placeholder="编码/名称/助记码" v-model="pagination.queryString" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"></el-input>
+                <el-input placeholder="编码/名称/助记码" v-model="pagination.queryString" style="width: 200px;" class="filter-item"  @keyup.enter.native="findPage()"></el-input>
                 <el-button @click="findPage()" class="dalfBut">查询</el-button>
                 <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
             </div>
@@ -278,40 +278,139 @@
         },
         //加载页面即执行的函数
         created() {
-           
+            this.findPage();
         },
         methods: {
             //编辑检查组
             handleEdit() {
-              
+              axios.post("/checkgroup/editGroup?checkitemIds="+this.checkitemIds,this.formData)
+                  .then((res) => {
+                      this.dialogFormVisible4Edit = false;
+                      if (res.data.flag) {
+                          this.$message(
+                              {
+                                  message: res.data.message,
+                                  type: 'success'
+                              }
+                          );
+                      }else {
+                          this.$message().error(res.data.message);
+                      }
+                  }).finally(
+                  () => {
+                      this.findPage();
+                  }
+              )
             },
             //添加
             handleAdd () {
-                
+                axios.post("/checkgroup/addGroup?checkitemIds="+this.checkitemIds,this.formData)
+                    .then(
+                        (res) => {
+                            this.dialogFormVisible = false;
+                            if(res.data.flag) {
+                                this.$message(
+                                    {
+                                        message: res.data.message,
+                                        type: 'success'
+                                    }
+                                )
+                            }else {
+                                this.$message(
+                                    {
+                                        message: res.data.message,
+                                        type: 'error'
+                                    }
+                                )
+                            }
+                        }
+                    ).finally(() => {
+                        this.findPage();
+                });
             },
             //分页查询
             findPage() {
-               
+                //发送ajax的请求完成页面数据加载
+                var param ={
+                    currentPage: this.pagination.currentPage,
+                    pageSize: this.pagination.pageSize,
+                    queryString: this.pagination.queryString
+                };
+                //发送ajax请求
+                axios.post("/checkgroup/findPage",param,).then((res) => {
+                    //给我们的vue的变量赋值
+                    this.pagination.total = res.data.total;
+                    this.dataList = res.data.rows;
+                });
             },
             // 重置表单
             resetForm() {
-              
+              this.formData={};
             },
             //弹出添加窗口
             handleCreate() {
-              
+                this.resetForm();
+                this.dialogFormVisible = true;
+                this.activeName = 'first';
+                this.checkitemIds = [];
+                //这个新增窗口需要回显所有的检查项的信息，以便勾选
+                axios.get("/checkitem/showAllItem").then((res) => {
+                    if(res.data.flag){
+                        this.tableData = res.data.data;
+                    }else{
+                        this.$message().error(res.data.messge);
+                    }
+                });
             },
             // 弹出编辑窗口
             handleUpdate(row) {
-              
+                this.resetForm();
+              this.dialogFormVisible4Edit = true;
+              axios.get("/checkgroup/findGroupInfoById?id="+row.id)
+                  .then((res) => {
+                      if (res.data.flag) {
+                          this.formData = res.data.data;
+                      }else {
+                          this.$message().error(res.data.message);
+                      }
+                  });
+
+              axios.get("/checkitem/showAllItem").then((res) => {
+                  if(res.data.flag) {
+                      this.tableData = res.data.data;
+                      axios.get("/checkitem/getCheckItemIdByGroupId?id="+row.id)
+                          .then((res) => {
+                              this.checkitemIds = res.data;
+                          })
+                  }else {
+                      this.$message().error(res.data.message);
+                  }
+              })
             },
             //切换页码
             handleCurrentChange(currentPage) {
-                
+                this.pagination.currentPage = currentPage;
+                this.findPage();
             },
             // 删除
             handleDelete(row) {
-               
+               this.$confirm("确认删除该条数据？","提示",{type:'warning'})
+                   .then(() => {
+                       axios.get("/checkgroup/deleteInfoById?id="+row.id)
+                           .then((res) => {
+                               if (res.data.flag) {
+                                   this.$message({
+                                       message: res.data.message,
+                                       type: 'success'
+                                   })
+                               }else {
+                                   this.$message().error(res.data.message);
+                               }
+                           }).finally(() => {
+                               this.findPage();
+                           }
+                       )
+                   })
             }
         }
     })

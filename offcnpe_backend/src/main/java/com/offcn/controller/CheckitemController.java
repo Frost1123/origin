@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("checkitem")
 public class CheckitemController {
@@ -36,6 +38,18 @@ public class CheckitemController {
     public PageResult findPage(@RequestBody QueryPageBean queryPageBean){
         PageResult pageResult = checkitemService.findPage(queryPageBean);
         return pageResult;
+    }
+
+    //展示所有数据
+    @RequestMapping("showAllItem")
+    public Result showAllItem() {
+        List<Checkitem> checkitemList = null;
+        try {
+            checkitemList = checkitemService.showAllItem();
+        }catch (Exception e) {
+            return new Result(false,MessageConstant.QUERY_CHECKITEM_FAIL,checkitemList);
+        }
+        return new Result(true,MessageConstant.QUERY_CHECKITEM_SUCCESS,checkitemList);
     }
 
     //删除检查项
@@ -72,5 +86,11 @@ public class CheckitemController {
             return new Result(false,MessageConstant.EDIT_CHECKITEM_FAIL);
         }
         return new Result(true,MessageConstant.EDIT_CHECKITEM_SUCCESS);
+    }
+
+    //通过检查组id获得相应的检查项
+    @RequestMapping("getCheckItemIdByGroupId")
+    public List<Integer> getCheckItemIdByGroupId(Integer id) {
+        return checkitemService.getCheckItemIdByGroupId(id);
     }
 }
