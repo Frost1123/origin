@@ -77,7 +77,7 @@
             <div class="app-container">
                 <div class="box">
                     <div class="filter-container">
-                        <el-input placeholder="编码/名称/助记码" v-model="pagination.queryString" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"></el-input>
+                        <el-input placeholder="编码/名称/助记码" v-model="pagination.queryString" style="width: 200px;" class="filter-item" @keyup.enter.native="findPage()"></el-input>
                         <el-button @click="findPage()" class="dalfBut">查询</el-button>
                         <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
                     </div>
@@ -162,7 +162,7 @@
                                                     <el-form-item label="上传图片">
                                                         <el-upload
                                                                 class="avatar-uploader"
-                                                                action="/setmeal/upload.do"
+                                                                action="/setmeal/uploadpic"
                                                                 :auto-upload="autoUpload"
                                                                 name="imgFile"
                                                                 :show-file-list="false"
@@ -236,7 +236,7 @@
                 activeName:'first',//添加/编辑窗口Tab标签名称
                 pagination: {//分页相关属性
                     currentPage: 1,
-                    pageSize:10,
+                    pageSize:5,
                     total:100,
                     queryString:null,
                 },
@@ -252,33 +252,87 @@
             methods: {
                 //文件上传成功后的钩子，response为服务端返回的值，file为当前上传的文件封装成的js对象
                 handleAvatarSuccess(response, file) {
+                    this.imageUrl="http://localhost:9001/setmealpic/"+response.data;
+                    this.formData.img = response.data;
                 },
                 //上传图片之前执行
                 beforeAvatarUpload(file) {
 				  const isJPG = file.type === 'image/jpeg';
-				  const isLt2M = file.size / 1024 / 1024 < 2;
+				  const isLt2M = file.size / 1024 / 1024 < 3;
 				  if (!isJPG) {
 					this.$message.error('上传套餐图片只能是 JPG 格式!');
 				  }
 				  if (!isLt2M) {
-					this.$message.error('上传套餐图片大小不能超过 2MB!');
+					this.$message.error('上传套餐图片大小不能超过 3MB!');
 				  }
 				  return isJPG && isLt2M;
                 },
                 //添加
                 handleAdd () {
+                    axios.post("/setmeal/addMeal?groupInfo="+this.checkgroupIds,this.formData).then(
+                        (res) => {
+                            if (res.data.flag) {
+                                this.$message({
+                                    message: res.data.message,
+                                    type: 'success'
+                                });
+                            } else {
+                                this.$message().error(res.data.message);
+                            }
+                        }
+                    ).finally(() => {
+                        this.dialogFormVisible = false;
+                        this.findPage();
+                    })
                 },
                 //分页查询
                 findPage() {
+                    //封装查询参数
+                    var param = {
+                        //当前页
+                        currentPage: this.pagination.currentPage,
+                        //每页显示数据条数
+                        pageSize:  this.pagination.pageSize,
+                        //查询的条件字符串
+                        queryString: this.pagination.queryString
+                    };
+                    //ajax请求完成数据的请求和响应
+                    axios.post('/setmeal/findPage',param)
+                        .then((res) => {
+                            this.pagination.total=res.data.total; //查询的总条数
+                            this.dataList = res.data.rows;
+                            //当前页面展示的数据内容
+                        });
                 },
                 // 重置表单
                 resetForm() {
+                    this.formData={};
+                    this.checkitemIds = [];
+                    this.activeName = 'first';
+                    this.imageUrl = null;
                 },
                 // 弹出添加窗口
                 handleCreate() {
+                    this.resetForm();
+                    this.dialogFormVisible = true;
+                    axios.get("/checkgroup/showAllGroupInfo").then((res) => {
+                        if (res.data.flag) {
+                            this.tableData = res.data.data;
+                        }else{
+                            this.$message({
+                                message: res.data.message,
+                                type: 'error'
+                                }
+                            )
+                        }
+                    })
                 },
                 //切换页码
                 handleCurrentChange(currentPage) {
+                    //将点击的页码给我们的当前页从新赋值
+                    this.pagination.currentPage = currentPage;
+                    //调用分页查询方法
+                    this.findPage();
                 }
             }
         })

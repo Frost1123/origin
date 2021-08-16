@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * <p>
  *  前端控制器
@@ -79,6 +81,19 @@ public class CheckgroupController {
             return new Result(false,MessageConstant.DELETE_CHECKGROUP_FAIL);
         }
         return new Result(true,MessageConstant.DELETE_CHECKGROUP_SUCCESS);
+    }
+
+    //查询所有检查组信息，回显操作
+    @RequestMapping("showAllGroupInfo")
+    public Result showAllGroupInfo() {
+        List<Checkgroup> list = null;
+        try {
+            list = checkgroupService.showAllGroupInfo();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false,MessageConstant.QUERY_CHECKGROUP_FAIL,list);
+        }
+        return new Result(true,MessageConstant.DELETE_CHECKGROUP_SUCCESS,list);
     }
 }
 

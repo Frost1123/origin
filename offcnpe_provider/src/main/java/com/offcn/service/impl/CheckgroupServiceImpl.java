@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 
 @Component
 @Service(interfaceClass = CheckgroupService.class)
@@ -85,5 +86,10 @@ public class CheckgroupServiceImpl implements CheckgroupService {
         setmealCheckgroupMapper.deleteByMap(map);
         //再删除检查组
         checkgroupMapper.deleteById(id);
+    }
+
+    @Override
+    public List showAllGroupInfo() {
+        return checkgroupMapper.selectList(null);
     }
 }
