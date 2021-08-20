@@ -13,4 +13,5 @@ public interface CheckgroupService {
     void editGroup(Checkgroup checkgroup,Integer[] checkitemIds);
     void deleteInfoById(Integer id);
     List showAllGroupInfo();
+    List<Integer> getCheckGroupIdBySetmealId(Integer groupId);
 }

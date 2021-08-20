@@ -56,5 +56,51 @@ public class Order extends Model {
      */
     private Integer setmealId;
 
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Integer memberId) {
+        this.memberId = memberId;
+    }
+
+    public LocalDate getOrderdate() {
+        return orderdate;
+    }
+
+    public void setOrderdate(LocalDate orderdate) {
+        this.orderdate = orderdate;
+    }
+
+    public String getOrdertype() {
+        return ordertype;
+    }
+
+    public void setOrdertype(String ordertype) {
+        this.ordertype = ordertype;
+    }
+
+    public String getOrderstatus() {
+        return orderstatus;
+    }
+
+    public void setOrderstatus(String orderstatus) {
+        this.orderstatus = orderstatus;
+    }
+
+    public Integer getSetmealId() {
+        return setmealId;
+    }
+
+    public void setSetmealId(Integer setmealId) {
+        this.setmealId = setmealId;
+    }
 }

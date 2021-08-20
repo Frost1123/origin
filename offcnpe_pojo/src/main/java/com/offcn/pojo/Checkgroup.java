@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * <p>
  * 
@@ -38,6 +40,9 @@ public class Checkgroup extends Model {
     private String remark;
 
     private String attention;
+
+    @TableField(exist = false)
+    private List<Checkitem> checkitems;
 
     public Integer getId() {
         return id;
@@ -93,5 +98,13 @@ public class Checkgroup extends Model {
 
     public void setAttention(String attention) {
         this.attention = attention;
+    }
+
+    public List<Checkitem> getCheckitems() {
+        return checkitems;
+    }
+
+    public void setCheckitems(List<Checkitem> checkitems) {
+        this.checkitems = checkitems;
     }
 }

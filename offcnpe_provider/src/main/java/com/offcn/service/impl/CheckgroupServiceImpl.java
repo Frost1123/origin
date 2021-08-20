@@ -1,6 +1,7 @@
 package com.offcn.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.offcn.constants.PageResult;
@@ -10,6 +11,7 @@ import com.offcn.mapper.CheckgroupMapper;
 import com.offcn.mapper.SetmealCheckgroupMapper;
 import com.offcn.pojo.Checkgroup;
 import com.offcn.pojo.CheckgroupCheckitem;
+import com.offcn.pojo.SetmealCheckgroup;
 import com.offcn.service.CheckgroupService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Service(interfaceClass = CheckgroupService.class)
@@ -32,9 +35,9 @@ public class CheckgroupServiceImpl implements CheckgroupService {
     @Override
     public void addGroup(Checkgroup checkgroup, Integer[] checkitemIds) {
         checkgroupMapper.insert(checkgroup);
+        CheckgroupCheckitem checkgroupCheckitem = new CheckgroupCheckitem();
+        checkgroupCheckitem.setCheckgroupId(checkgroup.getId());
         for (Integer id : checkitemIds) {
-            CheckgroupCheckitem checkgroupCheckitem = new CheckgroupCheckitem();
-            checkgroupCheckitem.setCheckgroupId(checkgroup.getId());
             checkgroupCheckitem.setCheckitemId(id);
             checkgroupCheckitemMapper.insert(checkgroupCheckitem);
         }
@@ -91,5 +94,13 @@ public class CheckgroupServiceImpl implements CheckgroupService {
     @Override
     public List showAllGroupInfo() {
         return checkgroupMapper.selectList(null);
+    }
+
+    @Override
+    public List<Integer> getCheckGroupIdBySetmealId(Integer groupId) {
+        LambdaQueryWrapper<SetmealCheckgroup> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.select(SetmealCheckgroup::getCheckgroupId);
+        lambdaQueryWrapper.eq(SetmealCheckgroup::getSetmealId,groupId);
+        return setmealCheckgroupMapper.selectObjs(lambdaQueryWrapper).stream().map(o -> (Integer)o).collect(Collectors.toList());
     }
 }

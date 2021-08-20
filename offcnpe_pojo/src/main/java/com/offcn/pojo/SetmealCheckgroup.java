@@ -20,7 +20,7 @@ public class SetmealCheckgroup extends Model {
 
     private static final long serialVersionUID = 1L;
 
-      private Integer setmealId;
+    private Integer setmealId;
 
     private Integer checkgroupId;
 
@@ -43,4 +43,5 @@ public class SetmealCheckgroup extends Model {
     public void setCheckgroupId(Integer checkgroupId) {
         this.checkgroupId = checkgroupId;
     }
+
 }

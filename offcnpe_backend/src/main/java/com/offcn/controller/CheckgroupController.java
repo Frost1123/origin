@@ -10,6 +10,7 @@ import com.offcn.pojo.Checkgroup;
 import com.offcn.service.CheckgroupService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -94,6 +95,12 @@ public class CheckgroupController {
             return new Result(false,MessageConstant.QUERY_CHECKGROUP_FAIL,list);
         }
         return new Result(true,MessageConstant.DELETE_CHECKGROUP_SUCCESS,list);
+    }
+
+    //根据套餐id查询相应的检查组id
+    @RequestMapping("getCheckGroupIdBySetmealId")
+    public List<Integer> getCheckGroupIdBySetmealId(@RequestParam("id") Integer groupId) {
+        return checkgroupService.getCheckGroupIdBySetmealId(groupId);
     }
 }
 

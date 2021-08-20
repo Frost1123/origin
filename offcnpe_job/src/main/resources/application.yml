@@ -1,0 +1,12 @@
+server:
+  port: 9002
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: offcn_job
+
+  redis:
+    host: 192.168.100.100
+    port: 6379

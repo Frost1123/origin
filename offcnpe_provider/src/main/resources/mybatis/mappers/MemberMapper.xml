@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ujiuye.mapper.MemberMapper">
+<mapper namespace="com.offcn.mapper.MemberMapper">
+    <!--根据日期统计会员数，统计指定日期之前的会员数-->
+    <select id="findMemberCountBeforeDate" parameterType="String" resultType="Integer">
+        select count(id) from t_member where regTime &lt;= #{value}
+    </select>
 
+    <!--根据日期统计会员数-->
+    <select id="findMemberCountByDate" parameterType="String" resultType="Integer">
+        select count(id) from t_member where regTime = #{value}
+    </select>
+
+    <!--根据日期统计会员数，统计指定日期之后的会员数-->
+    <select id="findMemberCountAfterDate" parameterType="String" resultType="Integer">
+        select count(id) from t_member where regTime &gt;= #{value}
+    </select>
+
+    <!--总会员数-->
+    <select id="findMemberTotalCount" resultType="int">
+        select count(id) from t_member
+    </select>
 </mapper>

@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * <p>
  * 
@@ -44,6 +46,9 @@ public class Setmeal extends Model {
     private String attention;
 
     private String img;
+
+    @TableField(exist = false)
+    private List<Checkgroup> checkGroups;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -127,5 +132,13 @@ public class Setmeal extends Model {
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    public List<Checkgroup> getCheckGroups() {
+        return checkGroups;
+    }
+
+    public void setCheckGroups(List<Checkgroup> checkGroups) {
+        this.checkGroups = checkGroups;
     }
 }

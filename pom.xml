@@ -10,6 +10,7 @@
     <module>offcnpe_provider</module>
     <module>offcnpe_backend</module>
     <module>offcnpe_mobile</module>
+      <module>offcnpe_job</module>
   </modules>
   <!--引入了springboot-->
   <parent>
